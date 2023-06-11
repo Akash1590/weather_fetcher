@@ -2,3 +2,4 @@ csv/
 instruction.txt
 amazon_credentials.py
 .idea
+__pycache__/
