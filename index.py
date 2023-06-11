@@ -135,6 +135,10 @@ def update_interval():
 
 
 if __name__ == '__main__':
+    if not os.path.exists('csv'):
+        os.makedirs('csv')
+    else:
+        print("Folder Already Exists")
     weather_thread = threading.Thread(target=fetch_weather_data)
     weather_thread.daemon = True
     weather_thread.start()
