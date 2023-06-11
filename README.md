@@ -34,7 +34,7 @@ Requirements: Docker
 1.Build Docker Image:  
   Run the following command to build the Docker image:
   ```shell
-  docker run -d -p 5000:5000 <your-docker-image-name>
+  docker build -t <your-docker-image-name> .
   ```  
 2. Run the Docker Container:
    Execute the following command to run the Docker container:
