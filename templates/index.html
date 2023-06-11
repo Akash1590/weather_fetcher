@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather Data</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: url("https://giphy.com/gifs/clouds-love-cute-qq5gwamAHVofm");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .container {
+            margin-top: 50px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+        }
+
+        form {
+            margin-bottom: 30px;
+        }
+
+        label {
+            margin-right: 10px;
+        }
+
+        button[type="submit"] {
+            margin-top: 10px;
+        }
+
+        #weather-data {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Weather Data</h1>
+
+        <form action="/" method="POST" class="form-inline justify-content-center">
+            <div class="form-group">
+                <label for="interval-hour">Hour:</label>
+                <input type="number" class="form-control" id="interval-hour" name="interval-hour" min="0" max="23" required>
+            </div>
+
+            <div class="form-group">
+                <label for="interval-minutes">Minutes:</label>
+                <input type="number" class="form-control" id="interval-minutes" name="interval-minutes" min="0" max="59" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Fetch Weather</button>
+        </form>
+
+
+<!--        <textarea id="weather-data" rows="10" readonly class="form-control"></textarea>-->
+        {% if weather_data %}
+        {% if weather_data['last_update_time'] %}
+        <h2 class="text-center">Last Updated:  {{ weather_data['last_update_time']}}<span id="last-updated"></span></h2>
+        {% endif %}
+        <h2>Current Weather</h2>
+        <p>Temperature: {{ weather_data['current_weather']['temperature'] }}</p>
+        <p>Windspeed: {{ weather_data['current_weather']['windspeed'] }}</p>
+        <p>Winddirection: {{ weather_data['current_weather']['winddirection'] }}</p>
+<!--        <p>Rain: {{ weather_data['hourly']['rain'] }} mm</p>-->
+<!--        <p>Showers: {{ weather_data['hourly']['showers'] }} mm</p>-->
+<!--        <p>Showers: {{ weather_data['hourly']['showers'] }} mm</p>-->
+    {% else %}
+        <p>No weather data available.</p>
+    {% endif %}
+    </div>
+
+    <script>
+        const form = document.querySelector('form');
+        const lastUpdated = document.querySelector('#last-updated');
+        const weatherData = document.querySelector('#weather-data');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const intervalHour = document.querySelector('#interval-hour').value;
+            const intervalMinutes = document.querySelector('#interval-minutes').value;
+
+            fetch(`/update_interval?intervalHour=${intervalHour}&intervalMinutes=${intervalMinutes}`)
+                .then(response => response.json())
+                .then(data => {
+                    weatherData.value = JSON.stringify(data, null, 2);
+                    lastUpdated.textContent = new Date().toLocaleString();
+                })
+                .catch(error => console.error(error));
+        });
+    </script>
+</body>
+</html>
+<!--<iframe src="https://giphy.com/embed/qq5gwamAHVofm" width="480" height="269" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/clouds-love-cute-qq5gwamAHVofm">via GIPHY</a></p>-->
