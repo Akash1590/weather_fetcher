@@ -1,12 +1,19 @@
-
 from flask import Flask, render_template, request, jsonify
-from amazon_credentials import access_key_id,secret_access_key,Region
+import os
+# from amazon_credentials import access_key_id, secret_access_key, Region
+if os.path.isfile("amazon_credentials.py"):
+    from amazon_credentials import access_key_id, secret_access_key, Region
+else:
+    access_key_id="access_key_id"
+    secret_access_key="secret_access_key"
+    Region="Region"
 import csv
 import time
 import threading
 import datetime
 import requests
 import boto3
+# from botocore.exceptions import BotoCoreError, NoCredentialsError
 
 app = Flask(__name__)
 
@@ -14,13 +21,21 @@ API_URL = "https://api.open-meteo.com/v1/forecast"
 LATITUDE = 50.93
 LONGITUDE = 6.95
 INTERVAL = 24 * 60 * 60  # Interval in seconds (e.g., 3600 for 1 hour)
-# INTERVAL = 120
+amazon_flag = False
 s3 = boto3.client('s3', aws_access_key_id=access_key_id,
                   aws_secret_access_key=secret_access_key,
                   region_name=Region)
-#
-# print(s3)
 
+try:
+    response = s3.list_buckets()
+    print("Connection to S3 successful. Buckets:")
+    for bucket in response['Buckets']:
+        a=bucket['Name']
+        print("Bucket Name")
+    amazon_flag = True
+except Exception as e:
+    amazon_flag = False
+    print("An error occurred:", str(e))
 
 
 def get_current_weather_data():
@@ -72,14 +87,8 @@ def write_to_csv(data):
                                  data[key][keys[3]][i],
                                  data[key][keys[4]][i]])
 
-                        # writer.writerow(keys[0])
-
             print(f"Current weather data successfully written to {filename}.")
         return filename
-        # bucket_name = "fraunhoferinterview"
-        # file_name = filename
-        # destination_folder = "data/" + filename
-        # s3.upload_file(file_name, bucket_name, destination_folder)
     else:
         print("No weather data available to write to CSV.")
 
@@ -92,15 +101,19 @@ def fetch_weather_data():
             current_datetime = datetime.datetime.now()
             formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
             filename = write_to_csv(current_weather_data)
-            # bucket_name = "fraunhoferinterview"
-            # file_name = filename
-            # destination_folder = "data/" + filename
-            # s3.upload_file(file_name, bucket_name, destination_folder)
-            # print("**********************")
-            # print("INTERVAL"+str(INTERVAL))
-            # print("Uploaded to amazon aws")
-            # print("**********************")
+            bucket_name = "fraunhoferinterview"
+            file_name = filename
+            destination_folder = "data/" + filename
+            if amazon_flag:
+                s3.upload_file(file_name, bucket_name, destination_folder)
+            else:
+                current_weather_data['amazon_flag'] = amazon_flag
+            print("**********************")
+            print("INTERVAL" + str(INTERVAL))
+            print("Uploaded to amazon aws")
+            print("**********************")
             current_weather_data['last_update_time'] = formatted_datetime
+
             weather_data = current_weather_data
         time.sleep(INTERVAL)
 
@@ -125,4 +138,4 @@ if __name__ == '__main__':
     weather_thread = threading.Thread(target=fetch_weather_data)
     weather_thread.daemon = True
     weather_thread.start()
-    app.run()
+    app.run(host='0.0.0.0', port=5000)

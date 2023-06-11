@@ -41,6 +41,11 @@
 </head>
 <body>
     <div class="container">
+        {% if weather_data['amazon_flag']==False %}
+        <div class="alert alert-danger">
+            <strong>Danger!</strong> Your amazon credentials is not working. please check.
+        </div>
+        {% endif %}
         <h1 class="text-center">Weather Data</h1>
 
         <form action="/" method="POST" class="form-inline justify-content-center">
