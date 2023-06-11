@@ -1,20 +1,47 @@
-General Instructions :
-1.Clone the Repository: git clone https://github.com/Akash1590/weather_fetcher.git
-2.By running the project, the CSV folder will be automatically created if there are no permission issues.
-If, however, you encounter any permission issues, you have to create a folder named "csv" inside the "weather_fetcher" folder
-3. If you want to use amazon_aws for your data storage : Rename the amazon_credentials.txt to amazon_credentials.py
+# Weather Fetcher
 
-If you want to run the project manually :
-Run the following command to install the project dependencies from the requirements.txt file: "pip install -r requirements.txt"
+## General Instructions
 
-Then run the project with : "python index.py"
-The project will run on "localhost:5000"
+1. Clone the Repository:
+   ```shell
+   git clone https://github.com/Akash1590/weather_fetcher.git
+2. Automatic Creation of CSV Folder:  
+  By running the project, the CSV folder will be automatically created if there are no permission issues.
+  If you encounter any permission issues, manually create a folder named "csv" inside the "weather_fetcher" folder.  
+  By running the project, the CSV folder will be automatically created if there are no permission issues.
+  If you encounter any permission issues, manually create a folder named "csv" inside the "weather_fetcher" folder.
+3. Amazon AWS Data Storage:  
+   If you want to use Amazon AWS for your data storage:  
+   - Rename the "amazon_credentials.txt" file to "amazon_credentials.py".
 
-If you want to run the project with docker :
-Requirements : docker
 
-Run the command : docker build -t <your docker image name> .
-Next Command : docker run -d -p 5000:5000 <your docker image name>
+## Manual Project Execution  
+1. Install Dependencies:
+Run the following command to install the project dependencies from the requirements.txt file:
+   ```shell 
+   pip install -r requirements.txt
+   ```
+2. Run the Project:  
+   Execute the following command to run the project:
+   ```shell 
+   python index.py
+   ```
+3. Access the Project:
+   The project will run on: http://localhost:5000/
+   
+## Running the Project with Docker
+Requirements: Docker  
+1.Build Docker Image:  
+  Run the following command to build the Docker image:
+  ```shell
+  docker run -d -p 5000:5000 <your-docker-image-name>
+  ```  
+2. Run the Docker Container:
+   Execute the following command to run the Docker container:
+   ```shell
+   docker run -d -p 5000:5000 <your-docker-image-name>
+   ```
+   
 
 
 
