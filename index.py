@@ -22,7 +22,7 @@ app = Flask(__name__)
 API_URL = "https://api.open-meteo.com/v1/forecast"
 LATITUDE = 50.93
 LONGITUDE = 6.95
-INTERVAL = 60  # Interval in seconds (e.g., 3600 for 1 hour)
+INTERVAL = 24*60*60  # Interval in seconds (e.g., 3600 for 1 hour)
 amazon_flag = False
 s3 = boto3.client('s3', aws_access_key_id=access_key_id,
                   aws_secret_access_key=secret_access_key,
