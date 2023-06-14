@@ -2,8 +2,107 @@
 <html>
 <head>
     <title>Weather Data</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<!--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">-->
+<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
+    body, html {
+    margin: 0;
+    padding: 0;
+}
+    body {
+            margin-top: 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .form-group {
+    margin-bottom: 10px;
+}
+
+        h1 {
+            text-align: center;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(1, 1, 1, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 700px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .item-list {
+            margin-top: 20px;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+
+        .item-name {
+            flex: 1;
+        }
+
+        .download-btn,
+        .delete-btn {
+            margin-left: 10px;
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+        }
+
+        .btn-icon {
+            margin-right: 5px;
+        }
+
+        .pagination {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination-button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            background-color: #e0e0e0;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .pagination-button.active {
+            background-color: #4CAF50;
+            color: white;
+        }
         body {
             background-image: url("https://giphy.com/gifs/clouds-love-cute-qq5gwamAHVofm");
             background-size: cover;
@@ -17,14 +116,22 @@
             padding: 20px;
             border-radius: 10px;
         }
+        .box {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f2f2f2;
+}
+
 
         h1 {
             margin-bottom: 30px;
         }
 
         form {
-            margin-bottom: 30px;
-        }
+    margin-bottom: 30px;
+    text-align: center;
+}
 
         label {
             margin-right: 10px;
@@ -37,50 +144,211 @@
         #weather-data {
             width: 100%;
         }
+        .show-files-button {
+            margin-top: 10px;
+        }
+
+        input[type="number"] {
+    width: 60px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button[type="submit"] {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
     </style>
 </head>
 <body>
     <div class="container">
         {% if weather_data['amazon_flag']==False %}
-        <div class="alert alert-danger">
+        <div class="alert alert-danger" role="alert">
             <strong>Danger!</strong> Your amazon credentials is not working. please check.
         </div>
         {% endif %}
         <h1 class="text-center">Weather Data</h1>
 
         <form action="/" method="POST" class="form-inline justify-content-center">
-            <div class="form-group">
-                <label for="interval-hour">Hour:</label>
-                <input type="number" class="form-control" id="interval-hour" name="interval-hour" min="0" max="23" required>
-            </div>
+            <label>You can modify the interval time here for generating the CSV file.</label>
+    <div class="form-group">
+        <label for="interval-hour">Hour:</label>
+        <input type="number" class="form-control" id="interval-hour" name="interval-hour" min="0" max="23" required>
+    </div>
 
-            <div class="form-group">
-                <label for="interval-minutes">Minutes:</label>
-                <input type="number" class="form-control" id="interval-minutes" name="interval-minutes" min="0" max="59" required>
-            </div>
+    <div class="form-group" style="margin-left: 10px">
+        <label for="interval-minutes">Minutes:</label>
+        <input type="number" class="form-control" id="interval-minutes" name="interval-minutes" min="0" max="59" required>
+    </div>
 
-            <button type="submit" class="btn btn-primary">Fetch Weather</button>
-        </form>
+    <div class="form-group" style="margin-top: -10px; margin-left: 10px;">
+        <button type="submit" class="btn btn-primary">Fetch Weather</button>
+    </div>
+</form>
+
 
 
 <!--        <textarea id="weather-data" rows="10" readonly class="form-control"></textarea>-->
         {% if weather_data %}
         {% if weather_data['last_update_time'] %}
-        <h2 class="text-center">Last Updated:  {{ weather_data['last_update_time']}}<span id="last-updated"></span></h2>
+        <div class="box">
+            <h2 class="text-center">Last Updated:  {{ weather_data['last_update_time']}}<span id="last-updated"></span></h2>
+        </div>
         {% endif %}
-        <h2>Current Weather</h2>
-        <p>Temperature: {{ weather_data['current_weather']['temperature'] }}</p>
-        <p>Windspeed: {{ weather_data['current_weather']['windspeed'] }}</p>
-        <p>Winddirection: {{ weather_data['current_weather']['winddirection'] }}</p>
+        <h2 style="margin-top: 20px">Current Weather</h2>
+        <p>Temperature : {{ weather_data['current_weather']['temperature'] }}</p>
+        <p>Windspeed : {{ weather_data['current_weather']['windspeed'] }}</p>
+        <p>Winddirection : {{ weather_data['current_weather']['winddirection'] }}</p>
 <!--        <p>Rain: {{ weather_data['hourly']['rain'] }} mm</p>-->
 <!--        <p>Showers: {{ weather_data['hourly']['showers'] }} mm</p>-->
 <!--        <p>Showers: {{ weather_data['hourly']['showers'] }} mm</p>-->
     {% else %}
         <p>No weather data available.</p>
     {% endif %}
+        <button id="open-modal" class="btn btn-primary">Show All Generated CSV</button>
+
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal">
+            <h2>All generated CSV</h2>
+            <ul class="item-list" id="item-list"></ul>
+            <div class="pagination" id="pagination"></div>
+            <button id="close-modal" class="btn btn-secondary">Close Modal</button>
+        </div>
     </div>
 
-    <script>
+    </div>
+
+</body>
+<script>
+
+    const openModalBtn = document.getElementById('open-modal');
+    const closeModalBtn = document.getElementById('close-modal');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const itemList = document.getElementById('item-list');
+    const pagination = document.getElementById('pagination');
+    const itemsPerPage = 10; // Adjust the number of items per page as needed
+    let currentPage = 1;
+
+
+    function openModal() {
+
+    fetch(`/get_allfiles`)
+            .then(response => response.json())
+            .then(data => {
+                files=data.files
+                modalOverlay.style.display = 'flex';
+                renderItems(currentPage,files);
+                renderPagination(files);
+            })
+            .catch(error => console.error(error));
+    }
+
+    function closeModal() {
+        modalOverlay.style.display = 'none';
+    }
+
+    function renderItems(page,files) {
+        const startIndex = (page - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const itemsToRender = files.slice(startIndex, endIndex);
+
+        itemList.innerHTML = '';
+        itemsToRender.forEach(item => {
+            const listItem = document.createElement('li');
+            listItem.className = 'item';
+            listItem.innerHTML = `
+                <span class="item-name">${item}</span>
+                <button class="download-btn" onclick="downloadFile('${item}')"><i class="fas fa-download"></i> Download</button>
+                <button class="delete-btn" onclick="deleteFile('${item}')"><i class="fas fa-trash"></i> Delete</button>
+            `;
+            itemList.appendChild(listItem);
+        });
+    }
+
+
+    function deleteFile(fileName){
+        console.log(fileName)
+        fetch(`/delete?filename=${fileName}`)
+        .then(response => response.json())
+        .then(data => {
+        console.log(data)
+        modalOverlay.style.display = 'none';
+        files=data.files
+        modalOverlay.style.display = 'flex';
+        renderItems(currentPage,files);
+        renderPagination(files);
+        alert(fileName+" is Deleted")
+        console.log(data)
+        })
+        .catch(error => console.error(error));
+    }
+
+      function downloadFile(fileName) {
+        console.log(fileName)
+        fetch(`/download?filename=${fileName}`)
+        .then(response => {
+        if (!response.ok) {
+                    throw new Error('File download failed');
+                  }
+                  return response.blob();
+                })
+        .then(blob => {
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = fileName;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              window.URL.revokeObjectURL(url);
+              })
+        .catch(error => console.error(error));
+        console.log('Download:', fileName);
+        }
+
+
+
+    function renderPagination(files) {
+        const totalPages = Math.ceil(files.length / itemsPerPage);
+        pagination.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.className = 'pagination-button';
+            pageButton.textContent = i;
+            if (i === currentPage) {
+                pageButton.classList.add('active');
+            }
+            pageButton.addEventListener('click', () => {
+                currentPage = i;
+                renderItems(currentPage,files);
+                renderPagination(files);
+            });
+            pagination.appendChild(pageButton);
+        }
+    }
+
+    openModalBtn.addEventListener('click', openModal);
+    closeModalBtn.addEventListener('click', closeModal);
         const form = document.querySelector('form');
         const lastUpdated = document.querySelector('#last-updated');
         const weatherData = document.querySelector('#weather-data');
@@ -89,16 +357,21 @@
             e.preventDefault();
             const intervalHour = document.querySelector('#interval-hour').value;
             const intervalMinutes = document.querySelector('#interval-minutes').value;
-
+            if(intervalHour == '0' && intervalMinutes=='0'){
+            alert("Minimum Interval should be 1 min")
+            }
+            else{
             fetch(`/update_interval?intervalHour=${intervalHour}&intervalMinutes=${intervalMinutes}`)
                 .then(response => response.json())
                 .then(data => {
-                    weatherData.value = JSON.stringify(data, null, 2);
-                    lastUpdated.textContent = new Date().toLocaleString();
+                    console.log(data.status)
+                    alert(data.status);
                 })
-                .catch(error => console.error(error));
+                .catch(error => {
+                console.error(error);
+<!--                alert('Failed to update interval. Please try again.');-->
+                });}
         });
     </script>
-</body>
 </html>
 <!--<iframe src="https://giphy.com/embed/qq5gwamAHVofm" width="480" height="269" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/clouds-love-cute-qq5gwamAHVofm">via GIPHY</a></p>-->

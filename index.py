@@ -1,18 +1,20 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 import os
+
 # from amazon_credentials import access_key_id, secret_access_key, Region
 if os.path.isfile("amazon_credentials.py"):
     from amazon_credentials import access_key_id, secret_access_key, Region
 else:
-    access_key_id="access_key_id"
-    secret_access_key="secret_access_key"
-    Region="Region"
+    access_key_id = "access_key_id"
+    secret_access_key = "secret_access_key"
+    Region = "Region"
 import csv
 import time
 import threading
 import datetime
 import requests
 import boto3
+
 # from botocore.exceptions import BotoCoreError, NoCredentialsError
 
 app = Flask(__name__)
@@ -20,7 +22,7 @@ app = Flask(__name__)
 API_URL = "https://api.open-meteo.com/v1/forecast"
 LATITUDE = 50.93
 LONGITUDE = 6.95
-INTERVAL = 24 * 60 * 60  # Interval in seconds (e.g., 3600 for 1 hour)
+INTERVAL = 60  # Interval in seconds (e.g., 3600 for 1 hour)
 amazon_flag = False
 s3 = boto3.client('s3', aws_access_key_id=access_key_id,
                   aws_secret_access_key=secret_access_key,
@@ -30,7 +32,7 @@ try:
     response = s3.list_buckets()
     print("Connection to S3 successful. Buckets:")
     for bucket in response['Buckets']:
-        a=bucket['Name']
+        a = bucket['Name']
         print("Bucket Name")
     amazon_flag = True
 except Exception as e:
@@ -95,7 +97,11 @@ def write_to_csv(data):
 
 def fetch_weather_data():
     global weather_data
+    global INTERVAL
+    global amazon_flag
+    # global s3
     while True:
+        print("Hello I am printing CSV")
         current_weather_data = get_current_weather_data()
         if current_weather_data:
             current_datetime = datetime.datetime.now()
@@ -120,7 +126,8 @@ def fetch_weather_data():
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    print(weather_data)
+    # print(weather_data)
+    print("INTERVAL" + str(INTERVAL))
     return render_template('index.html', weather_data=weather_data)
 
 
@@ -130,8 +137,49 @@ def update_interval():
     interval_hour = int(request.args.get('intervalHour'))
     interval_minutes = int(request.args.get('intervalMinutes'))
     INTERVAL = (interval_hour * 60 + interval_minutes) * 60  # Convert hours and minutes to seconds
+    print("INTERVAL" + str(INTERVAL))
+    interval_msg= "Update Interval time will be : "+str(interval_hour)+" hours and "+ str(interval_minutes)+" minutes";
+    return jsonify({'status': interval_msg})
 
-    return jsonify({'status': 'success'})
+
+@app.route('/get_allfiles', methods=['GET'])
+def get_allfiles():
+    try:
+        # Get a list of all files in the folder
+        files = os.listdir('csv')
+        response = {'files': files}
+        status_code = 200
+    except Exception as e:
+        response = {'error': str(e)}
+        status_code = 500
+    print("Hello")
+    return jsonify(response), status_code
+
+
+@app.route('/download', methods=['GET'])
+def download():
+    fileName = request.args.get('filename')
+    print(fileName)
+    return send_file('csv/' + fileName, as_attachment=True)
+    # return jsonify({'status': 'success'})
+
+
+@app.route('/delete', methods=['GET'])
+def delete():
+    fileName = request.args.get('filename')
+    try:
+        os.remove('csv/' + fileName)
+    except Exception as e:
+        print("File Deleted")
+    try:
+        # Get a list of all files in the folder
+        files = os.listdir('csv')
+        response = {'files': files}
+        status_code = 200
+    except Exception as e:
+        response = {'error': str(e)}
+        status_code = 500
+    return jsonify(response), status_code
 
 
 if __name__ == '__main__':
