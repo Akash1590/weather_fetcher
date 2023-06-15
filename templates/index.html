@@ -121,6 +121,7 @@
     padding: 10px;
     border-radius: 5px;
     background-color: #f2f2f2;
+    text-align: center;
 }
 
 
@@ -181,10 +182,12 @@ button[type="submit"] {
 </head>
 <body>
     <div class="container">
+        {% if weather_data%}
         {% if weather_data['amazon_flag']==False %}
-        <div class="alert alert-danger" role="alert">
+        <div class="alert alert-danger" role="alert" style="text-align: center;">
             <strong>Danger!</strong> Your amazon credentials is not working. please check.
         </div>
+        {% endif %}
         {% endif %}
         <h1 class="text-center">Weather Data</h1>
 
@@ -211,7 +214,7 @@ button[type="submit"] {
         {% if weather_data %}
         {% if weather_data['last_update_time'] %}
         <div class="box">
-            <h2 class="text-center">Last Updated:  {{ weather_data['last_update_time']}}<span id="last-updated"></span></h2>
+            <h2 class="text-center" >Last Updated:  {{ weather_data['last_update_time']}}<span id="last-updated"></span></h2>
         </div>
         {% endif %}
         <h2 style="margin-top: 20px">Current Weather</h2>
@@ -222,7 +225,7 @@ button[type="submit"] {
 <!--        <p>Showers: {{ weather_data['hourly']['showers'] }} mm</p>-->
 <!--        <p>Showers: {{ weather_data['hourly']['showers'] }} mm</p>-->
     {% else %}
-        <p>No weather data available.</p>
+        <p>API is not working at this moment.No weather data available.</p>
     {% endif %}
         <button id="open-modal" class="btn btn-primary">Show All Generated CSV</button>
 
